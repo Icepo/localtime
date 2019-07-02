@@ -2,25 +2,35 @@ package localtime
 
 import "testing"
 
-func TestLocalNow(t *testing.T) {
-	t.Logf("%v", LocalNow())
+func TestLocalTime_Now(t *testing.T) {
+	t.Logf("%v", NewLocalTime().Now())
 }
 
-func TestLocalNowS(t *testing.T) {
-	t.Logf("%v", LocalNowS())
+func TestLocalTime_Location(t *testing.T) {
+	loc := NewLocalTime()
+	t.Logf("%v", loc.Now())
+	err := loc.Location("UTC")
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Logf("%v", loc.Now())
 }
 
-func TestLocalNowMs(t *testing.T) {
-	t.Logf("%v", LocalNowMs())
+func TestLocalTime_LocalNowS(t *testing.T) {
+	t.Logf("%v", NewLocalTime().NowS())
 }
 
-func TestLocalNowNs(t *testing.T) {
-	t.Logf("%v", LocalNowNs())
+func TestLocalTime_NowMs(t *testing.T) {
+	t.Logf("%v", NewLocalTime().NowMs())
 }
 
-func TestLocalNowFormat(t *testing.T) {
+func TestLocalTime_NowNs(t *testing.T) {
+	t.Logf("%v", NewLocalTime().NowNs())
+}
+
+func TestLocalTime_NowFormat(t *testing.T) {
 	layouts := []string{Virgule, Minus, Dot, VirguleTime, MinusTime, DotTime}
 	for _, layout := range layouts {
-		t.Logf("%s\t%v", layout, LocalNowFormat(layout))
+		t.Logf("%s\t%v", layout, NewLocalTime().NowFormat(layout))
 	}
 }

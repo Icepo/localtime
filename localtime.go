@@ -3,7 +3,7 @@ package localtime
 import "time"
 
 const (
-	defaultLocation = "Asia/Chongqing"
+	defaultLocStr = "Asia/Chongqing"
 
 	Virgule = "2006/01/02"
 	Minus   = "2006-01-02"
@@ -14,32 +14,49 @@ const (
 	DotTime     = Dot + " 15:04:05"
 )
 
-var location *time.Location
+var defaultLoc *time.Location
 
 func init() {
 	var err error
-	location, err = time.LoadLocation(defaultLocation)
+	defaultLoc, err = time.LoadLocation(defaultLocStr)
 	if err != nil {
 		panic(err)
 	}
 }
 
-func LocalNow() time.Time {
-	return time.Now().In(location)
+type LocalTime struct {
+	location *time.Location
 }
 
-func LocalNowNs() int64 {
-	return LocalNow().UnixNano()
+func NewLocalTime() *LocalTime {
+	return &LocalTime{location: defaultLoc}
 }
 
-func LocalNowMs() int64 {
-	return LocalNow().UnixNano() / 1e6
+func (t *LocalTime) Location(loc string) error {
+	location, err := time.LoadLocation(loc)
+	if err != nil {
+		return err
+	}
+	t.location = location
+	return nil
 }
 
-func LocalNowS() int64 {
-	return LocalNow().Unix()
+func (t *LocalTime) Now() time.Time {
+	return time.Now().In(t.location)
 }
 
-func LocalNowFormat(layout string) string {
-	return LocalNow().Format(layout)
+func (t *LocalTime) NowNs() int64 {
+	return t.Now().UnixNano()
+}
+
+func (t *LocalTime) NowMs() int64 {
+	return t.Now().UnixNano() / 1e6
+}
+
+func (t *LocalTime) NowS() int64 {
+	return t.Now().Unix()
+}
+
+func (t *LocalTime) NowFormat(layout string) string {
+	return t.Now().Format(layout)
 }
